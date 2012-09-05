@@ -213,6 +213,7 @@ static struct tps80031_rtc_platform_data rtc_data = {
 		.tm_min = 2,
 		.tm_sec = 3,
 	},
+	.msecure_gpio = TEGRA_GPIO_PF7,
 };
 
 #define TPS_RTC()				\
@@ -592,45 +593,6 @@ static int __init enterprise_regulators_fixed_gpio_init(void)
 }
 subsys_initcall_sync(enterprise_regulators_fixed_gpio_init);
 
-#ifdef CONFIG_PM
-static void endeavor_suspend_work(void)
-{
-	int ret = gpio_direction_output(TEGRA_GPIO_PF7, 0);
-	if (ret)
-		pr_err("%s: fail to output low gpio PF7\n", __func__);
-}
-
-static void endeavor_resume_work(void)
-{
-	int ret = gpio_direction_output(TEGRA_GPIO_PF7, 1);
-	if (ret)
-		pr_err("%s: fail to output high gpio PF7\n", __func__);
-}
-#endif
-
-static int __init endeavor_gpio_rtc_init(void)
-{
-	int ret = gpio_request(TEGRA_GPIO_PF7, "pmu_msecure");
-	if (ret) {
-		pr_err("%s unable to request gpio PF7\n", __func__);
-		goto fail;
-	}
-	ret = gpio_direction_output(TEGRA_GPIO_PF7, 1);
-	if (ret) {
-		pr_err("%s unable to set output gpio PF7\n", __func__);
-		goto fail;
-	}
-
-#ifdef CONFIG_PM
-	tps_platform.suspend_work = endeavor_suspend_work;
-	tps_platform.resume_work = endeavor_resume_work;
-#endif
-	return 0;
-fail:
-	gpio_free(TEGRA_GPIO_PF7);
-	return ret;
-}
-
 static void enterprise_power_off(void)
 {
 	int ret;
@@ -662,7 +624,7 @@ int __init enterprise_regulator_init(void)
 	pmc_dpd_pads = readl(pmc + PMC_DPD_PADS_ORIDE);
 	writel(pmc_dpd_pads & ~PMC_DPD_PADS_ORIDE_BLINK , pmc + PMC_DPD_PADS_ORIDE);
 
-	endeavor_gpio_rtc_init();
+	tegra_gpio_enable(TEGRA_GPIO_PF7);
 
 	tps_platform.num_subdevs = ARRAY_SIZE(tps80031_devs_a03);
 	tps_platform.subdevs = tps80031_devs_a03;
