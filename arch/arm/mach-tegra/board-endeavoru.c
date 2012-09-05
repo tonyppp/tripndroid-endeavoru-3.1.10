@@ -199,9 +199,6 @@ int __init A_PROJECT_keys_init(void)
 
 	pr_info("Registering gpio keys\n");
 
-	for (i = 0; i < ARRAY_SIZE(A_PROJECT_keys); i++)
-		tegra_gpio_enable(A_PROJECT_keys[i].gpio);
-
 	platform_device_register(&A_PROJECT_keys_device);
 
 	return 0;
@@ -352,7 +349,6 @@ static void config_enterprise_flashlight_gpios(void)
 		gpio_free(FL_TORCH_EN);
 		return;
 	}
-	tegra_gpio_enable(FL_TORCH_EN);
 	gpio_export(FL_TORCH_EN, false);
 
 	ret = gpio_request(FL_FLASH_EN, "fl_flash_en");
@@ -367,8 +363,6 @@ static void config_enterprise_flashlight_gpios(void)
 		gpio_free(FL_FLASH_EN);
 		return;
 	}
-
-	tegra_gpio_enable(FL_FLASH_EN);
 	gpio_export(FL_FLASH_EN, false);
 
 	printk("%s: end...", __func__);
@@ -466,8 +460,6 @@ static noinline void __init enterprise_bt_wl128x(void)
 {
         platform_device_register(&wl128x_device);
 	platform_device_register(&btwilink_device);
-        tegra_gpio_enable(TEGRA_GPIO_PU0);
-
         return;
 }
 /* TI 128x Bluetooth end */
@@ -797,7 +789,6 @@ if (ret < 0) {
 	gpio_free(TEGRA_GPIO_PY4);
 	return;
 }
-tegra_gpio_enable(TEGRA_GPIO_PY4);
 
 ret = gpio_request(TEGRA_GPIO_PY5,"headset_uart_RX");
 if (ret < 0) {
@@ -811,7 +802,6 @@ if (ret < 0) {
 	gpio_free(TEGRA_GPIO_PY5);
 	return;
 }
-tegra_gpio_enable(TEGRA_GPIO_PY5);
 
 ret = gpio_request(TEGRA_GPIO_PZ0,"headset_uart_switch");
 if (ret < 0) {
@@ -825,7 +815,6 @@ if (ret < 0) {
 	gpio_free(TEGRA_GPIO_PZ0);
 	return;
 }
-tegra_gpio_enable(TEGRA_GPIO_PZ0);
 
 }
 
@@ -1152,9 +1141,6 @@ struct tegra_touchscreen_init __initdata synaptics_init_data = {
 
 static int __init enterprise_touch_init(void)
 {
-	tegra_gpio_enable(TOUCH_GPIO_IRQ);
-	tegra_gpio_enable(TOUCH_GPIO_RST);
-
 	gpio_request(TOUCH_GPIO_IRQ, "touch-irq");
 	gpio_direction_input(TOUCH_GPIO_IRQ);
 
@@ -1344,14 +1330,12 @@ static void config_tegra_usb_id_gpios(bool output)
 			pr_info("[CABLE] %s: TEGRA_GPIO_USB_ID dir NG\n", __func__);
 			return;
 		}
-		tegra_gpio_enable(TEGRA_GPIO_USB_ID);
 	}
 	else {
 		if (gpio_direction_input(TEGRA_GPIO_USB_ID) < 0) {
 			pr_info("[CABLE] %s: TEGRA_GPIO_USB_ID dir setup failed\n", __func__);
 			return;
 		}
-		tegra_gpio_enable(TEGRA_GPIO_USB_ID);
 	}
 }
 
@@ -1362,14 +1346,12 @@ void config_tegra_desk_aud_gpios(bool output, bool out_val)
 			pr_info("[CABLE] %s: TEGRA_GPIO_DESK_AUD dir NG\n", __func__);
 			return;
 		}
-		tegra_gpio_enable(TEGRA_GPIO_DESK_AUD);
 	}
 	else {
 		if (gpio_direction_input(TEGRA_GPIO_DESK_AUD) < 0) {
 			pr_info("[CABLE] %s: TEGRA_GPIO_DESK_AUD dir setup failed\n", __func__);
 			return;
 		}
-		tegra_gpio_enable(TEGRA_GPIO_DESK_AUD);
 	}
 }
 EXPORT_SYMBOL(config_tegra_desk_aud_gpios);
@@ -1423,7 +1405,6 @@ static void cable_tegra_gpio_init(void)
 			pr_err("[CABLE:ERR] %s: cable_detect_pdata.usb_id_pin_gpio dir setup failed\n", __func__);
 			return;
 		}
-		tegra_gpio_enable(cable_detect_pdata.usb_id_pin_gpio);
 	}
 
 	if (TEGRA_GPIO_DESK_AUD >= 0) {
@@ -1435,7 +1416,6 @@ static void cable_tegra_gpio_init(void)
 			pr_err("[CABLE:ERR] %s: TEGRA_GPIO_DESK_AUD dir setup failed\n", __func__);
 			return;
 		}
-		tegra_gpio_enable(TEGRA_GPIO_DESK_AUD);
 	}
 }
 
@@ -1485,19 +1465,6 @@ static void enterprise_modem_init(void)
 
 		pr_info("%s: enable baseband gpio(s)\n", __func__);
 
-		tegra_gpio_enable(BB_VDD_EN);
-
-		tegra_gpio_enable(AP2BB_RST_PWRDWNn);
-		tegra_gpio_enable(AP2BB_RSTn);
-		tegra_gpio_enable(AP2BB_PWRON);
-		tegra_gpio_enable(BB2AP_RADIO_FATAL);
-		tegra_gpio_enable(tegra_baseband_power_data.modem.generic.mdm_reset);
-		tegra_gpio_enable(tegra_baseband_power_data.modem.generic.mdm_on);
-		tegra_gpio_enable(tegra_baseband_power_data.modem.generic.ap2mdm_ack);
-		tegra_gpio_enable(tegra_baseband_power_data.modem.generic.mdm2ap_ack);
-		tegra_gpio_enable(tegra_baseband_power_data.modem.generic.ap2mdm_ack2);
-		tegra_gpio_enable(tegra_baseband_power_data.modem.generic.mdm2ap_ack2);
-
 		tegra_baseband_power_data.hsic_register = &tegra_usb_hsic_host_register;
 		tegra_baseband_power_data.hsic_unregister = &tegra_usb_hsic_host_unregister;
 
@@ -1518,7 +1485,6 @@ static void enterprise_modem_init(void)
 			gpio_free(TEGRA_GPIO_PI5);
 			return;
 		}
-		tegra_gpio_enable(TEGRA_GPIO_PI5);
 		gpio_export(TEGRA_GPIO_PI5, true);
 
 			printk(KERN_INFO"%s: gpio config for core dump when radio fatal error.", __func__);
@@ -1534,7 +1500,6 @@ static void enterprise_modem_init(void)
 					gpio_free(TEGRA_GPIO_PN2);
 					return;
 				}
-				tegra_gpio_enable(TEGRA_GPIO_PN2);
 				gpio_export(TEGRA_GPIO_PN2, true);
 }
 
