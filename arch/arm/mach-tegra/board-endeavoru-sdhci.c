@@ -265,10 +265,6 @@ static int __init enterprise_wifi_init(void)
 	if (rc)
 		pr_err("WLAN_WOW gpio request failed:%d\n", rc);
 
-	tegra_gpio_enable(ENTERPRISE_WLAN_PWR);
-	tegra_gpio_enable(ENTERPRISE_WLAN_RST);
-	tegra_gpio_enable(ENTERPRISE_WLAN_WOW);
-
 	rc = gpio_direction_output(ENTERPRISE_WLAN_PWR, 0);
 	if (rc)
 		pr_err("WLAN_PWR gpio direction configuration failed:%d\n", rc);
@@ -297,11 +293,7 @@ int __init enterprise_sdhci_init(void)
 
 void blue_pincfg_uartc_resume(void) {
 	tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_UART3_CTS_N, TEGRA_PUPD_NORMAL);
-        tegra_gpio_disable(TEGRA_GPIO_PA1);
-        tegra_gpio_disable(TEGRA_GPIO_PC0);
-        tegra_gpio_disable(TEGRA_GPIO_PW6);
 	tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_UART3_RXD, TEGRA_PUPD_NORMAL);
-        tegra_gpio_disable(TEGRA_GPIO_PW7);
 }
 EXPORT_SYMBOL(blue_pincfg_uartc_resume);
 
@@ -310,25 +302,20 @@ void blue_pincfg_uartc_suspend(void) {
         gpio_direction_output(TEGRA_GPIO_PU0, 0);
 
         /* UART3_CTS_N GPIO-A.01 I(PU) */
-        tegra_gpio_enable(TEGRA_GPIO_PA1);
         gpio_direction_input(TEGRA_GPIO_PA1);
         tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_UART3_CTS_N, TEGRA_PUPD_PULL_UP);
 
         /* UART3_RTS_N GPIO-C.00 O(H) */
-        tegra_gpio_enable(TEGRA_GPIO_PC0);
         gpio_direction_output(TEGRA_GPIO_PC0, 1);
 
         /* UART3_TXD GPIO-W.06 O(H) */
-        tegra_gpio_enable(TEGRA_GPIO_PW6);
         gpio_direction_output(TEGRA_GPIO_PW6, 1);
 
         /* UART3_RXD GPIO-W.07 I(PU) */
-        tegra_gpio_enable(TEGRA_GPIO_PW7);
         gpio_direction_input(TEGRA_GPIO_PW7);
         tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_UART3_RXD, TEGRA_PUPD_PULL_UP);
 
 	/* UART3 CTS_N WAKEUP GPIO-O.05 I(NP) */
-	tegra_gpio_enable(TEGRA_GPIO_PO5);
 	gpio_direction_input(TEGRA_GPIO_PO5);
 	tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_ULPI_DATA4, TEGRA_PUPD_NORMAL);
 }
@@ -364,7 +351,6 @@ void blue_pincfg_uartc_gpio_request(void) {
         if (err)
                 pr_err("BT_WAKEUP gpio request failed:%d\n", err);
 
-        tegra_gpio_enable(TEGRA_GPIO_PO5);
         gpio_direction_input(TEGRA_GPIO_PO5);
 
 	tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_ULPI_DATA4, TEGRA_PUPD_NORMAL);
