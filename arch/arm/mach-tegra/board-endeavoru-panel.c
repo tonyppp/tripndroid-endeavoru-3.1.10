@@ -162,7 +162,6 @@ static struct platform_tegra_pwm_backlight_data enterprise_disp1_backlight_data 
 	.which_dc		= 0,
 	.which_pwm		= TEGRA_PWM_PM1,
 	.gpio_conf_to_sfio	= TEGRA_GPIO_PW1,
-	.switch_to_sfio		= &tegra_gpio_disable,
 	.max_brightness		= 255,
 	.dft_brightness		= 85,
 	.notify			= enterprise_backlight_notify,
@@ -399,7 +398,6 @@ static int enterprise_dsi_panel_enable(void)
 			gpio_free(enterprise_dsi_panel_reset);
 			return ret;
 		}
-		tegra_gpio_enable(enterprise_dsi_panel_reset);
 
 		gpio_set_value(enterprise_dsi_panel_reset, 0);
 		udelay(2000);
@@ -421,7 +419,6 @@ static int enterprise_dsi_panel_disable(void)
 
 #if DSI_PANEL_RESET
 	if (g_display_on != true) {
-		tegra_gpio_disable(enterprise_dsi_panel_reset);
 		gpio_free(enterprise_dsi_panel_reset);
 	} else
 		g_display_on = false;
@@ -3193,17 +3190,6 @@ int __init enterprise_panel_init(void)
 	tegra_ion_data.heaps[0].base = tegra_carveout_start;
 	tegra_ion_data.heaps[0].size = tegra_carveout_size;
 #endif
-
-	err = gpio_request_array(panel_init_gpios, ARRAY_SIZE(panel_init_gpios));
-	if(err) {
-		goto failed;
-	}
-
-	int pin_count = ARRAY_SIZE(panel_init_gpios);
-
-	for (i = 0; i < pin_count; i++) {
-		tegra_gpio_enable(panel_init_gpios[i].gpio);
-	}
 
 	DISP_INFO_LN("panel id 0x%lx\n", g_panel_id);
 
