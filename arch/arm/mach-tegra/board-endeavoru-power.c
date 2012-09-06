@@ -494,9 +494,9 @@ GPIO_REG(4, sdmmc3_vdd_sel,  tps80031_rails(SMPS4),
 FIXED_REG(0, led_3v3_en, NULL,
 		ENT_TPS80031_GPIO_REGEN2, true, 3300, 1, 0);
 FIXED_REG(1, aud_a1v8_en, NULL,
-		TEGRA_GPIO_PD2, true, 1800, 1, 0);
+		TEGRA_GPIO_PD2, true, 1800, 0, 0);
 FIXED_REG(2, vib_3v_en, NULL,
-		TEGRA_GPIO_PE7, true, 3000, 1, 0);
+		TEGRA_GPIO_PE7, true, 3000, 0, 0);
 FIXED_REG(3, mhl_3v3_en, NULL,
 		TEGRA_GPIO_PY2, true, 3300, 0, 0);
 FIXED_REG(4, aud_3v3_en,  NULL,
@@ -522,7 +522,7 @@ FIXED_REG(13, mhl_1v2_en,  NULL,
 FIXED_REG(14, sdmmc_2v85_en,  NULL,
 		TEGRA_GPIO_PM3, true, 2800, 1, 0);
 FIXED_REG(15, vdd_fuse_en,  NULL,
-		TEGRA_GPIO_PM0, true, 3300, 1, 0);
+		TEGRA_GPIO_PM0, true, 3300, 0, 0);
 
 #define ADD_FIXED_REG(_name)	(&fixed_reg_##_name##_dev)
 
