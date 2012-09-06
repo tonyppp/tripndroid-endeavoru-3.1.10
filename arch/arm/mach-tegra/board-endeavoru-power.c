@@ -453,8 +453,8 @@ static struct gpio gpio_reg_sdmmc3_vdd_sel_gpios[] = {
 		},							\
 	}
 
-GPIO_REG(4, sdmmc3_vdd_sel,  tps80031_rails(SMPS4),
-		false, false, 0, 1000, 3300);
+GPIO_REG(16, sdmmc3_vdd_sel,  tps80031_rails(SMPS4),
+		true, false, 0, 1000, 3300);
 
 /* Macro for defining fixed regulator sub device data */
 #define FIXED_REG(_id, _name, _input_supply, _gpio_nr, _active_high,	\
