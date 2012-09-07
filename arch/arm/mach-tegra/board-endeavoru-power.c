@@ -380,16 +380,20 @@ static struct regulator_consumer_supply fixed_reg_mhl_1v2_en_supply[] = {
         REGULATOR_SUPPLY("v_mhl_1v2", NULL),
 };
 
-static struct regulator_consumer_supply fixed_reg_sdmmc_2v85_en_supply[] = {
-        REGULATOR_SUPPLY("v_sdmmc_2v85", NULL),
-};
-
 static struct regulator_consumer_supply fixed_reg_vdd_fuse_en_supply[] = {
         REGULATOR_SUPPLY("vdd_fuse", NULL),
 };
 
 static struct regulator_consumer_supply gpio_reg_sdmmc3_vdd_sel_supply[] = {
-	REGULATOR_SUPPLY("vddio_sdmmc", "NULL"),
+	REGULATOR_SUPPLY("vddio_sdmmc3_2v85_1v8", NULL),
+	REGULATOR_SUPPLY("sdmmc3_compu_pu", NULL),
+	REGULATOR_SUPPLY("vddio_sdmmc", "sdhci-tegra.2"),
+	REGULATOR_SUPPLY("vsys_3v7", NULL),
+};
+
+static struct regulator_consumer_supply fixed_reg_vdd_sdmmc3_2v85_en_supply[] = {
+	REGULATOR_SUPPLY("en_vdd_sdmmc3", NULL),
+	REGULATOR_SUPPLY("vddio_sd_slot", "sdhci-tegra.2"),
 };
 
 static struct gpio_regulator_state gpio_reg_sdmmc3_vdd_sel_states[] = {
@@ -519,20 +523,20 @@ FIXED_REG(12, cam_a2v85_en,  NULL,
 		TEGRA_GPIO_PE3, true, 2800, 0, 0);
 FIXED_REG(13, mhl_1v2_en,  NULL,
 		TEGRA_GPIO_PE4, true, 1200, 0, 0);
-FIXED_REG(14, sdmmc_2v85_en,  NULL,
-		TEGRA_GPIO_PM3, true, 2800, 1, 0);
+FIXED_REG(14, vdd_sdmmc3_2v85_en,  NULL,
+		TEGRA_GPIO_PM3, true, 2850, 1, 0);
 FIXED_REG(15, vdd_fuse_en,  NULL,
 		TEGRA_GPIO_PM0, true, 3300, 0, 0);
 
 #define ADD_FIXED_REG(_name)	(&fixed_reg_##_name##_dev)
 
 #define FIXED_REGS_COMMON		\
-	ADD_FIXED_REG(sdmmc_2v85_en),	\
 	ADD_FIXED_REG(vib_3v_en),	\
 	ADD_FIXED_REG(led_3v3_en)
 
 static struct platform_device *fixed_regs_devices_a03[] = {
 	FIXED_REGS_COMMON,
+	ADD_FIXED_REG(vdd_sdmmc3_2v85_en),
 	ADD_FIXED_REG(aud_a1v8_en),
 	ADD_FIXED_REG(mhl_3v3_en),
 	ADD_FIXED_REG(aud_3v3_en),
