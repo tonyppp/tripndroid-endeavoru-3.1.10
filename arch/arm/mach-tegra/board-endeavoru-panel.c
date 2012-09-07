@@ -2961,7 +2961,7 @@ struct tegra_fb_info f_proj_data = {
 static struct tegra_dc_out enterprise_disp1_out = {
 	.align		= TEGRA_DC_ALIGN_MSB,
 	.order		= TEGRA_DC_ORDER_RED_BLUE,
-	.parent_clk	= "pll_d_out0",
+//	.parent_clk	= "pll_d_out0",
 
 	.flags		= DC_CTRL_MODE,
 	.type		= TEGRA_DC_OUT_DSI,
