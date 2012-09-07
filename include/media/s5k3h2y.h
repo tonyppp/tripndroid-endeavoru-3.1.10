@@ -26,7 +26,15 @@
 #define S5K3H2Y_IOCTL_SET_COARSE_TIME	_IOW('o', 3, __u32)
 #define S5K3H2Y_IOCTL_SET_GAIN			_IOW('o', 4, __u16)
 #define S5K3H2Y_IOCTL_GET_STATUS			_IOR('o', 5, __u8)
-#define S5K3H2Y_IOCTL_SET_GROUP_HOLD		_IOW('o', 6, struct s5k3h2y_ae)
+#define S5K3H2Y_IOCTL_SET_GROUP_HOLD	    _IOW('o', 6, struct s5k3h2y_ae)
+#define S5K3H2Y_IOCTL_SET_CAMERA_MODE	_IOW('o', 7, __u32)
+#define S5K3H2Y_IOCTL_SYNC_SENSORS		_IOW('o', 8, __u32)
+#define S5K3H2Y_IOCTL_GET_SENSORDATA		_IOR('o', 9, struct s5k3h2y_sensordata)
+
+struct s5k3h2y_sensordata {
+    __u32 fuse_id_size;
+	__u8 fuse_id[16];
+};
 
 struct s5k3h2y_mode {
 	int xres;
