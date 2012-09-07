@@ -247,7 +247,6 @@ static void enterprise_nct1008_init(void)
 {
 	int ret;
 
-	tegra_gpio_enable(TEGRA_GPIO_PCC2);
 	ret = gpio_request(TEGRA_GPIO_PCC2, "temp_alert");
 	if (ret < 0) {
 		pr_err("%s: gpio_request failed %d\n", __func__, ret);
@@ -334,7 +333,6 @@ static void config_nfc_gpios(void)
         gpio_free(RUBY_GPIO_NFC_VEN);
         return;
     }
-    tegra_gpio_enable(RUBY_GPIO_NFC_VEN);
 
     ret = gpio_direction_output(RUBY_GPIO_NFC_DL, 0);
     if (ret < 0) {
@@ -343,7 +341,6 @@ static void config_nfc_gpios(void)
         gpio_free(RUBY_GPIO_NFC_DL);
         return;
     }
-    tegra_gpio_enable(RUBY_GPIO_NFC_DL);
 
     ret = gpio_direction_input(RUBY_GPIO_NFC_INT);
     if (ret < 0) {
@@ -352,7 +349,6 @@ static void config_nfc_gpios(void)
         gpio_free(RUBY_GPIO_NFC_INT);
         return;
     }
-    tegra_gpio_enable(RUBY_GPIO_NFC_INT);
 
     gpio_set_value(RUBY_GPIO_NFC_VEN, 1);
     pr_info("%s\n", __func__);
@@ -414,7 +410,6 @@ static void enterprise_gsensor_irq_init(void)
 			gpio_free(TEGRA_GPIO_PN5);
 			return;
 		}
-		tegra_gpio_enable(TEGRA_GPIO_PN5);
 		tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_LCD_SDOUT, TEGRA_PUPD_NORMAL);
 		
 	pr_info("[GSNR] g-sensor irq end...\n");
@@ -438,7 +433,6 @@ static void enterprise_gyro_diag_init(void)
 			gpio_free(TEGRA_GPIO_PH3);
 			return;
 		}
-		tegra_gpio_enable(TEGRA_GPIO_PH3);
 		tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_GMI_AD11, TEGRA_PUPD_NORMAL);
 
 		
@@ -450,7 +444,6 @@ static void __init enterprise_mpuirq_init(void)
 {
 	int ret = 0;
 
-	tegra_gpio_enable(TEGRA_GPIO_PI6);
 	ret = gpio_request(TEGRA_GPIO_PI6, SENSOR_MPU_NAME);
 	if (ret < 0) {
 		pr_err("%s: gpio_request failed %d\n", __func__, ret);
@@ -484,8 +477,6 @@ static void enterprise_gyro_sleep_pin(void)
 			gpio_free(TEGRA_GPIO_PR2);
 			return;
 	}
-	tegra_gpio_enable(TEGRA_GPIO_PR2);
-
 }
 
 static void enterprise_comp_irq_init(void)
@@ -505,7 +496,6 @@ static void enterprise_comp_irq_init(void)
 		return;
 	}
 
-	tegra_gpio_enable(TEGRA_GPIO_PJ2);
 	tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_GMI_CS1_N, TEGRA_PUPD_NORMAL);
 	gpio_free(TEGRA_GPIO_PJ2);
 }
@@ -943,8 +933,6 @@ static void enterprise_battery_init(void)
 				__func__, i);
 			goto bat_fail_free_gpio;
 		}
-
-		tegra_gpio_enable(enterprise_battery_gpio_data[i].gpio);
 	}
 
 	platform_device_register(&htc_battery_pdev);
