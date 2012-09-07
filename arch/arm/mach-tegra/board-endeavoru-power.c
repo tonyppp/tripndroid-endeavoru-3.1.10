@@ -1,7 +1,7 @@
 /*
  * arch/arm/mach-tegra/board-endeavoru-power.c
  *
- * Copyright (C) 2012 NVIDIA, Inc.
+ * Copyright (C) 2011 NVIDIA, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -32,7 +32,6 @@
 #include <linux/platform_data/tegra_bpc_mgmt.h>
 #include <linux/regulator/driver.h>
 #include <linux/regulator/gpio-regulator.h>
-
 #include <linux/tps80032_adc.h>
 #include <linux/tps80032_vsys_alarm.h>
 
@@ -47,7 +46,6 @@
 #include "board.h"
 #include "board-endeavoru.h"
 #include "pm.h"
-#include "wakeups-t3.h"
 #include "tegra3_tsensor.h"
 
 #define PMC_CTRL		0x0
@@ -59,26 +57,33 @@
 /************************ TPS80031 based regulator ****************/
 static struct regulator_consumer_supply tps80031_vio_supply_a03[] = {
 	REGULATOR_SUPPLY("vio_1v8", NULL),
-	REGULATOR_SUPPLY("vddio_gmi", NULL),
+	REGULATOR_SUPPLY("avdd_osc", NULL),
+	REGULATOR_SUPPLY("vddio_sys", NULL),
+	REGULATOR_SUPPLY("vddio_uart", NULL),
+	REGULATOR_SUPPLY("pwrdet_uart", NULL),
 	REGULATOR_SUPPLY("vddio_lcd", NULL),
 	REGULATOR_SUPPLY("pwrdet_lcd", NULL),
+	REGULATOR_SUPPLY("vddio_audio", NULL),
+	REGULATOR_SUPPLY("pwrdet_audio", NULL),
+	REGULATOR_SUPPLY("vddio_bb", NULL),
+	REGULATOR_SUPPLY("pwrdet_bb", NULL),
+	REGULATOR_SUPPLY("vddio_gmi", NULL),
+	REGULATOR_SUPPLY("avdd_usb_pll", NULL),
+	REGULATOR_SUPPLY("vddio_cam", NULL),
+	REGULATOR_SUPPLY("pwrdet_cam", NULL),
 	REGULATOR_SUPPLY("vddio_sdmmc1", NULL),
 	REGULATOR_SUPPLY("pwrdet_sdmmc1", NULL),
 	REGULATOR_SUPPLY("vddio_sdmmc4", NULL),
 	REGULATOR_SUPPLY("pwrdet_sdmmc4", NULL),
-	REGULATOR_SUPPLY("vddio_sys", NULL),
-	REGULATOR_SUPPLY("vddio_cam", NULL),
-	REGULATOR_SUPPLY("pwrdet_cam", NULL),
-	REGULATOR_SUPPLY("vddio_bb", NULL),
-	REGULATOR_SUPPLY("pwrdet_bb", NULL),
-	REGULATOR_SUPPLY("vddio_uart", NULL),
-	REGULATOR_SUPPLY("pwrdet_uart", NULL),
-	REGULATOR_SUPPLY("vddio_audio", NULL),
-	REGULATOR_SUPPLY("pwrdet_audio", NULL),
-	REGULATOR_SUPPLY("avdd_osc", NULL),
-	REGULATOR_SUPPLY("avdd_usb_pll", NULL),
 	REGULATOR_SUPPLY("avdd_hdmi_pll", NULL),
-	REGULATOR_SUPPLY("vddio_sdmmc3", NULL),
+	REGULATOR_SUPPLY("vddio_gps", NULL),
+	REGULATOR_SUPPLY("vdd_lcd_buffered", NULL),
+	REGULATOR_SUPPLY("vddio_nand", NULL),
+	REGULATOR_SUPPLY("pwrdet_nand", NULL),
+	REGULATOR_SUPPLY("vddio_sd", NULL),
+	REGULATOR_SUPPLY("vdd_bat", NULL),
+	REGULATOR_SUPPLY("vdd_io", NULL),
+	REGULATOR_SUPPLY("pwrdet_pex_ctl", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_smps1_supply_common[] = {
@@ -90,13 +95,15 @@ static struct regulator_consumer_supply tps80031_smps2_supply_common[] = {
 };
 
 static struct regulator_consumer_supply tps80031_smps3_supply_common[] = {
-	REGULATOR_SUPPLY("v_lpddr2_1v2", NULL),
+	REGULATOR_SUPPLY("en_vddio_ddr_1v2", NULL),
 	REGULATOR_SUPPLY("vddio_ddr", NULL),
+	REGULATOR_SUPPLY("vdd_lpddr", NULL),
 	REGULATOR_SUPPLY("ddr_comp_pu", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_smps4_supply_a03[] = {
-	REGULATOR_SUPPLY("v_prereg_2v6", NULL),
+	REGULATOR_SUPPLY("vddio_sdmmc_2v85", NULL),
+	REGULATOR_SUPPLY("pwrdet_sdmmc3", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_vana_supply_common[] = {
@@ -104,52 +111,53 @@ static struct regulator_consumer_supply tps80031_vana_supply_common[] = {
 };
 
 static struct regulator_consumer_supply tps80031_ldo1_supply_a03[] = {
-	REGULATOR_SUPPLY("v_dsi_csi_1v2", NULL),
 	REGULATOR_SUPPLY("avdd_dsi_csi", NULL),
-	REGULATOR_SUPPLY("vddio_hsic", NULL),
+	REGULATOR_SUPPLY("avdd_hsic", NULL),
+	REGULATOR_SUPPLY("pwrdet_mipi", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_ldo2_supply_common[] = {
-	REGULATOR_SUPPLY("v_vrtc_1v2", NULL),
 	REGULATOR_SUPPLY("vdd_rtc", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_ldo3_supply_common[] = {
-	REGULATOR_SUPPLY("v_fuse_src_3v3", NULL),
-	REGULATOR_SUPPLY("vpp_fuse", NULL),
+	REGULATOR_SUPPLY("vdd_vbrtr", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_ldo4_supply_a03[] = {
-	REGULATOR_SUPPLY("v_lcm_3v", NULL),
+	REGULATOR_SUPPLY("avdd_lcd", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_ldo5_supply_common[] = {
-	REGULATOR_SUPPLY("v_sr_2v85", NULL),
+	REGULATOR_SUPPLY("vdd_sensor", NULL),
+	REGULATOR_SUPPLY("vdd_compass", NULL),
+	REGULATOR_SUPPLY("vdd_als", NULL),
+	REGULATOR_SUPPLY("vdd_gyro", NULL),
+	REGULATOR_SUPPLY("vdd_touch", NULL),
+	REGULATOR_SUPPLY("vdd_proxim_diode", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_ldo6_supply_a03[] = {
-	REGULATOR_SUPPLY("v_mmc_rx_2v85", NULL),
 	REGULATOR_SUPPLY("vdd_ddr_rx", NULL),
+	REGULATOR_SUPPLY("vddf_core_emmc", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_ldo7_supply_a03[] = {
-	REGULATOR_SUPPLY("v_pllmeux_1v2", NULL),
-	REGULATOR_SUPPLY("vdd_plla_p_c", NULL),
+	REGULATOR_SUPPLY("vdd_plla_p_c_s", NULL),
 	REGULATOR_SUPPLY("vdd_pllm", NULL),
 	REGULATOR_SUPPLY("vdd_pllu_d", NULL),
 	REGULATOR_SUPPLY("vdd_pllx", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_ldoln_supply_a03[] = {
-	REGULATOR_SUPPLY("v_ddr_hs_1v0", NULL),
 	REGULATOR_SUPPLY("vdd_ddr_hs", NULL),
 };
 
 static struct regulator_consumer_supply tps80031_ldousb_supply_a03[] = {
-	REGULATOR_SUPPLY("v_usb_3v3", NULL),
+	REGULATOR_SUPPLY("avdd_usb_hdmi_3v3", NULL),
 	REGULATOR_SUPPLY("avdd_usb", NULL),
 	REGULATOR_SUPPLY("avdd_hdmi", NULL),
-/*	REGULATOR_SUPPLY("vdd_nct1008", "4-004c"), */
+/*	REGULATOR_SUPPLY("vdd", "4-004c"), */
 };
 
 static struct regulator_consumer_supply tps80031_vbus_supply_common[] = {
@@ -187,19 +195,19 @@ static struct regulator_consumer_supply tps80031_vbus_supply_common[] = {
 	}
 
 TPS_PDATA_INIT(vio, a03,   600, 2100, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0);
-TPS_PDATA_INIT(smps1, common, 600, 2600, 0, 0, 0, 0, -1, 0, 0, 0, PWR_REQ_INPUT_PREQ1, 0);
-TPS_PDATA_INIT(smps2, common, 600, 2600, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
-TPS_PDATA_INIT(smps3, common, 600, 2100, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
-TPS_PDATA_INIT(smps4, a03, 600, 2100, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
+TPS_PDATA_INIT(smps1, common, 600, 2100, 0, 0, 0, 0, -1, 0, 0, 0, PWR_REQ_INPUT_PREQ2 | PWR_OFF_ON_SLEEP, 0);
+TPS_PDATA_INIT(smps2, common, 600, 2100, 0, 0, 0, 0, -1, 0, 0, 0, PWR_REQ_INPUT_PREQ1, 0);
+TPS_PDATA_INIT(smps3, common, 600, 2100, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0);
+TPS_PDATA_INIT(smps4, a03, 600, 2100, 0, 0, 0, 0, -1, 0, 0, 0, PWR_REQ_INPUT_PREQ1, 0);
 TPS_PDATA_INIT(ldo1, a03, 1000, 3300, tps80031_rails(VIO), 0, 0, 0, -1, 0, 0, 0, 0, 0);
 TPS_PDATA_INIT(ldo2, common, 1000, 3300, 0, 1, 1, 1, 1000, 1, 1, 0, 0, 0);
-TPS_PDATA_INIT(ldo3, common, 1000, 3300, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
+TPS_PDATA_INIT(ldo3, common, 1000, 3300, tps80031_rails(VIO), 0, 0, 0, -1, 0, 0, 0, PWR_OFF_ON_SLEEP, 0);
 TPS_PDATA_INIT(ldo4, a03, 1000, 3300, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
 TPS_PDATA_INIT(ldo5, common, 1000, 3300, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
-TPS_PDATA_INIT(ldo6, a03, 1000, 3300, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0);
-TPS_PDATA_INIT(ldo7, a03, 1000, 3300, tps80031_rails(VIO), 0, 0, 0, -1, 0, 0, 0, 0, 0);
+TPS_PDATA_INIT(ldo6, a03, 1000, 3300, 0, 0, 0, 0, -1, 0, 0, 0, PWR_REQ_INPUT_PREQ1, 0);
+TPS_PDATA_INIT(ldo7, a03, 1000, 3300, tps80031_rails(VIO), 0, 0, 0, -1, 0, 0, 0, PWR_REQ_INPUT_PREQ1, 0);
 TPS_PDATA_INIT(ldoln, a03, 1000, 3300, tps80031_rails(SMPS3), 0, 0, 0, -1, 0, 0, 0, PWR_REQ_INPUT_PREQ1, 0);
-TPS_PDATA_INIT(ldousb, a03, 1000, 3300, 0, 0, 0, 0, -1, 0, 0, USBLDO_INPUT_VSYS, PWR_OFF_ON_SLEEP,0);
+TPS_PDATA_INIT(ldousb, a03, 1000, 3300, 0, 0, 0, 0, -1, 0, 0, USBLDO_INPUT_VSYS, PWR_OFF_ON_SLEEP, 0);
 TPS_PDATA_INIT(vana, common,  1000, 3300, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0);
 TPS_PDATA_INIT(vbus, common,  0, 5000, 0, 0, 0, 0, -1, 0, 0, (VBUS_SW_ONLY | VBUS_DISCHRG_EN_PDN), 0, 100000);
 
