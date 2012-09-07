@@ -74,35 +74,19 @@
 #define CAMERA_REGULATOR
 #define SENSOR_MPU_NAME "mpu3050"
 
-static struct regulator *v_sdmmc_2v85_en = NULL;
-static struct regulator *v_srio_1v8_en = NULL;
-
 int cm3629_enable_power(int enable)
 {
-		if(enable == 1) {
-			if (v_sdmmc_2v85_en == NULL) {
-		  		v_sdmmc_2v85_en = regulator_get(NULL, "v_sdmmc_2v85");
-		  		if (IS_ERR_OR_NULL(v_sdmmc_2v85_en)) {
-		   			pr_err("%s: v_sdmmc_2v85 pwr err\n", __func__);
-				}
-			}
-		 	regulator_enable(v_sdmmc_2v85_en);
+	int ret = 0;
+	int gpio = TEGRA_GPIO_PM3;
 
-			if (v_srio_1v8_en == NULL) {
-		  		v_srio_1v8_en = regulator_get(NULL, "v_srio_1v8");
-		  		if (IS_ERR_OR_NULL(v_srio_1v8_en)) {
-		   			pr_err("%s: v_srio_1v8_en pwr err\n", __func__);
-				}
-			}
-		 	regulator_enable(v_srio_1v8_en);
+	if(enable == 1) {
+			ret = gpio_request(gpio, "PLSensor_EN");
 
-		}else if(enable == 0) {
-			if(regulator_is_enabled(v_srio_1v8_en)) {
-				regulator_disable(v_srio_1v8_en);
-			}
-			if(regulator_is_enabled(v_sdmmc_2v85_en)) {
-				regulator_disable(v_sdmmc_2v85_en);
-			}	
+		if (ret < 0) {
+			pr_err("[PS][cm3629] Requesting GPIO %d failes\n", gpio);
+
+		return ret;
+		}
 	}
 	return 0;
 }
