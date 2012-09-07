@@ -387,6 +387,23 @@ static int enterprise_dsi_panel_enable(void)
 	if (ret)
 		return ret;
 
+		if (enterprise_lcd_reg == NULL) {
+			enterprise_lcd_reg = regulator_get(NULL, "v_lcmio_1v8");
+			if (IS_ERR_OR_NULL(enterprise_lcd_reg)) {
+				pr_err("Could not get regulator v_lcmio_1v8\n");
+				ret = PTR_ERR(enterprise_lcd_reg);
+				enterprise_lcd_reg = NULL;
+				return ret;
+			}
+		}
+		if (enterprise_lcd_reg != NULL) {
+			ret = regulator_enable(enterprise_lcd_reg);
+			if (ret < 0) {
+				pr_err("Could not enable v_lcmio_1v8\n");
+				return ret;
+			}
+		}
+
 #if DSI_PANEL_RESET
 	if (g_display_on != true) {
 		ret = gpio_request(enterprise_dsi_panel_reset, "panel reset");
