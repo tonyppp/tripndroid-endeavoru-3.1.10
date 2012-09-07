@@ -381,7 +381,7 @@ static int enterprise_dsi_panel_enable(void)
 {
 	int ret;
 
-	tegra_gpio_disable(LCM_TE);
+//	tegra_gpio_disable(LCM_TE);
 
 	ret = avdd_dsi_csi_rail_enable();
 	if (ret)
@@ -412,7 +412,7 @@ static int enterprise_dsi_panel_enable(void)
 static int enterprise_dsi_panel_disable(void)
 {
 
-	tegra_gpio_enable(LCM_TE);
+//	tegra_gpio_enable(LCM_TE);
 
 	if (enterprise_lcd_reg != NULL)
 		regulator_disable(enterprise_lcd_reg);
