@@ -388,15 +388,7 @@ static struct regulator_consumer_supply fixed_reg_vdd_fuse_en_supply[] = {
         REGULATOR_SUPPLY("vdd_fuse", NULL),
 };
 
-/* LCD_PWR0 (GPIO B2) from T30*/
-//static struct regulator_consumer_supply fixed_reg_lcd_1v8_en_supply[] = {
-//	REGULATOR_SUPPLY("lcd_vddio_en", NULL),
-//};
-
-/* LCD-D17 (GPIO M1) from T30*/
 static struct regulator_consumer_supply gpio_reg_sdmmc3_vdd_sel_supply[] = {
-//	REGULATOR_SUPPLY("vddio_sdmmc3_2v85_1v8", NULL),
-//	REGULATOR_SUPPLY("sdmmc3_compu_pu", NULL),
 	REGULATOR_SUPPLY("vddio_sdmmc", "NULL"),
 };
 
@@ -563,26 +555,17 @@ static struct platform_device *gpio_regs_devices[] = {
 
 static int __init enterprise_fixed_regulator_init(void)
 {
-	int i;
-	struct board_info board_info;
 	struct platform_device **fixed_regs_devices;
 	int nfixreg_devs;
 
-	tegra_get_board_info(&board_info);
+	fixed_regs_devices = fixed_regs_devices_a03;
+	nfixreg_devs = ARRAY_SIZE(fixed_regs_devices_a03);
 
-		fixed_regs_devices = fixed_regs_devices_a03;
-		nfixreg_devs = ARRAY_SIZE(fixed_regs_devices_a03);
-
-	for (i = 0; i < nfixreg_devs; ++i) {
-		struct fixed_voltage_config *fixed_reg_pdata =
-				fixed_regs_devices[i]->dev.platform_data;
-	}
 	return platform_add_devices(fixed_regs_devices, nfixreg_devs);
 }
 
 static int __init enterprise_gpio_regulator_init(void)
 {
-	int i, j;
 
 	return platform_add_devices(gpio_regs_devices,
 				    ARRAY_SIZE(gpio_regs_devices));
