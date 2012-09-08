@@ -161,7 +161,7 @@ static __initdata struct tegra_pingroup_config endeavoru_pinmux_common[] = {
     DEFAULT_PINMUX(SDMMC3_DAT4,     SDMMC3,          PULL_UP,      NORMAL,     INPUT), // NC
     DEFAULT_PINMUX(LCD_DC1,         RSVD2,           NORMAL,       NORMAL,     INPUT), // AUD_A1V8_EN
     DEFAULT_PINMUX(SDMMC3_DAT6,     SDMMC3,          NORMAL,       NORMAL,     INPUT), // NC
-    DEFAULT_PINMUX(SDMMC3_DAT7,     RSVD1,           NORMAL,       NORMAL,     INPUT), // NC
+    DEFAULT_PINMUX(SDMMC3_DAT7,     SDMMC3,          NORMAL,       NORMAL,     INPUT), // NC
 
     // Port E
     DEFAULT_PINMUX(LCD_D0,          DISPLAYA,        NORMAL,	   NORMAL,     OUTPUT), // MHL_USB_SEL
