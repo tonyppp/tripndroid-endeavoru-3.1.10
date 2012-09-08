@@ -210,7 +210,7 @@ static __initdata struct tegra_pingroup_config endeavoru_pinmux_common[] = {
     DEFAULT_PINMUX(GMI_CS6_N,       GMI,             NORMAL,       NORMAL,     INPUT), // NC
     DEFAULT_PINMUX(GMI_RST_N,       RSVD3,           PULL_UP,      TRISTATE,   INPUT), // NC
     DEFAULT_PINMUX(GMI_IORDY,       RSVD1,           NORMAL,       TRISTATE,   INPUT), //SIM_DET
-    DEFAULT_PINMUX(GMI_CS7_N,       RSVD,            PULL_UP,      NORMAL,     INPUT), // PEH_GYR_INT
+    DEFAULT_PINMUX(GMI_CS7_N,       GMI_ALT,         PULL_UP,      NORMAL,     INPUT), // PEH_GYR_INT
     DEFAULT_PINMUX(GMI_WAIT,        RSVD2,           NORMAL,       NORMAL,     INPUT), // NC
 
     // Port J
