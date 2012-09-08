@@ -292,7 +292,7 @@ static __initdata struct tegra_pingroup_config endeavoru_pinmux_common[] = {
 
     // Port S
     DEFAULT_PINMUX(KB_ROW8,         KBC,             PULL_UP,      NORMAL,     INPUT), // DSP_VOL_UP
-    DEFAULT_PINMUX(KB_ROW9,         RSVD,            NORMAL,       NORMAL,     INPUT), // NC
+    DEFAULT_PINMUX(KB_ROW9,         KBC,             NORMAL,       NORMAL,     INPUT), // NC
     DEFAULT_PINMUX(KB_ROW10,        RSVD,            NORMAL,       NORMAL,     INPUT), // CON_USB_ID_1
 
     // Port T
