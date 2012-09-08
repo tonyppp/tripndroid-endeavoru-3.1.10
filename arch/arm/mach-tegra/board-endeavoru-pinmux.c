@@ -352,7 +352,7 @@ static __initdata struct tegra_pingroup_config endeavoru_pinmux_common[] = {
     DEFAULT_PINMUX(SDMMC1_CLK,      SDMMC1,          NORMAL,       NORMAL,     OUTPUT), // AUD_REMO_OE
     DEFAULT_PINMUX(SDMMC1_CMD,      SDMMC1,          PULL_UP,      NORMAL,     INPUT), // test point
     DEFAULT_PINMUX(LCD_WR_N,        DISPLAYA,        NORMAL,       NORMAL,     INPUT), // NC
-    DEFAULT_PINMUX(LCD_SCK,         RSVD,            PULL_UP,      TRISTATE,   OUTPUT), // NC
+    DEFAULT_PINMUX(LCD_SCK,         DISPLAYA,        PULL_UP,      TRISTATE,   OUTPUT), // NC
     DEFAULT_PINMUX(SYS_CLK_REQ,     SYSCLK,          NORMAL,       NORMAL,     OUTPUT), // SYS
     I2C_PINMUX(PWR_I2C_SCL,         I2CPWR,          NORMAL,       NORMAL,     INPUT,  DISABLE,    ENABLE), // SYS_PWR_I2C_SCL
     I2C_PINMUX(PWR_I2C_SDA,         I2CPWR,          NORMAL,       NORMAL,     INPUT,  DISABLE,    ENABLE), // SYS_PWR_I2C_SDA
