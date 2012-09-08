@@ -253,7 +253,7 @@ static __initdata struct tegra_pingroup_config endeavoru_pinmux_common[] = {
     DEFAULT_PINMUX(HDMI_INT,        RSVD,            NORMAL,       TRISTATE,   INPUT), // MHL_HPD
 
     // Port O
-    DEFAULT_PINMUX(ULPI_DATA7,      RSVD,            NORMAL,       NORMAL,     INPUT), // AP_USB_UART_SEL
+    DEFAULT_PINMUX(ULPI_DATA7,      ULPI,            NORMAL,       NORMAL,     INPUT), // AP_USB_UART_SEL
     DEFAULT_PINMUX(ULPI_DATA0,      UARTA,           NORMAL,       NORMAL,     OUTPUT), // BSP_AP_DEBUG_TX
     DEFAULT_PINMUX(ULPI_DATA1,      UARTA,           NORMAL,       NORMAL,     INPUT), // BSP_AP_DEBUG_RX
     DEFAULT_PINMUX(ULPI_DATA2,      RSVD,            NORMAL,       NORMAL,     INPUT), // NC
