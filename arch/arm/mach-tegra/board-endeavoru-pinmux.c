@@ -256,7 +256,7 @@ static __initdata struct tegra_pingroup_config endeavoru_pinmux_common[] = {
     DEFAULT_PINMUX(ULPI_DATA7,      ULPI,            NORMAL,       NORMAL,     INPUT), // AP_USB_UART_SEL
     DEFAULT_PINMUX(ULPI_DATA0,      UARTA,           NORMAL,       NORMAL,     OUTPUT), // BSP_AP_DEBUG_TX
     DEFAULT_PINMUX(ULPI_DATA1,      UARTA,           NORMAL,       NORMAL,     INPUT), // BSP_AP_DEBUG_RX
-    DEFAULT_PINMUX(ULPI_DATA2,      RSVD,            NORMAL,       NORMAL,     INPUT), // NC
+    DEFAULT_PINMUX(ULPI_DATA2,      ULPI,            NORMAL,       NORMAL,     INPUT), // NC
     DEFAULT_PINMUX(ULPI_DATA3,      RSVD1,           NORMAL,       NORMAL,     INPUT), // CON_WIFI_IRQ
     DEFAULT_PINMUX(ULPI_DATA4,      ULPI,            PULL_DOWN,    NORMAL,     INPUT), // PER_GSENSOR_INT
     DEFAULT_PINMUX(ULPI_DATA5,      ULPI,            NORMAL,       NORMAL,     INPUT), // NC
