@@ -287,7 +287,7 @@ static __initdata struct tegra_pingroup_config endeavoru_pinmux_common[] = {
     DEFAULT_PINMUX(KB_ROW3,         RSVD2,           NORMAL,       NORMAL,     OUTPUT), // HAPTIC_EN
     DEFAULT_PINMUX(KB_ROW4,         RSVD3,           NORMAL,       NORMAL,     INPUT), // NC
     DEFAULT_PINMUX(KB_ROW5,         KBC,             NORMAL,       NORMAL,     INPUT), // NC
-    DEFAULT_PINMUX(KB_ROW6,         RSVD,            NORMAL,       TRISTATE,   INPUT), // CAM_CAM1_ID
+    DEFAULT_PINMUX(KB_ROW6,         KBC,             NORMAL,       TRISTATE,   INPUT), // CAM_CAM1_ID
     DEFAULT_PINMUX(KB_ROW7,         RSVD,            NORMAL,       TRISTATE,   INPUT), // CAM_FRONT_CAM_ID
 
     // Port S
