@@ -827,7 +827,7 @@ static ssize_t store_go_maxspeed_load(struct kobject *kobj,
 	return count;
 }
 
-static struct global_attr go_maxspeed_load_attr = __ATTR(go_maxspeed_load, 0644,
+static struct global_attr go_maxspeed_load_attr = __ATTR(go_maxspeed_load, 0666,
 		show_go_maxspeed_load, store_go_maxspeed_load);
 
 static ssize_t show_boost_factor(struct kobject *kobj,
@@ -849,7 +849,7 @@ static ssize_t store_boost_factor(struct kobject *kobj,
 	return count;
 }
 
-static struct global_attr boost_factor_attr = __ATTR(boost_factor, 0644,
+static struct global_attr boost_factor_attr = __ATTR(boost_factor, 0666,
 		show_boost_factor, store_boost_factor);
 
 static ssize_t show_io_is_busy(struct kobject *kobj,
@@ -888,7 +888,7 @@ static ssize_t store_sustain_load(struct kobject *kobj,
 	return count;
 }
 
-static struct global_attr sustain_load_attr = __ATTR(sustain_load, 0644,
+static struct global_attr sustain_load_attr = __ATTR(sustain_load, 0666,
 		show_sustain_load, store_sustain_load);
 
 static ssize_t show_max_boost(struct kobject *kobj,
@@ -910,7 +910,7 @@ static ssize_t store_max_boost(struct kobject *kobj,
 	return count;
 }
 
-static struct global_attr max_boost_attr = __ATTR(max_boost, 0644,
+static struct global_attr max_boost_attr = __ATTR(max_boost, 0666,
 		show_max_boost, store_max_boost);
 
 static ssize_t show_hispeed_freq(struct kobject *kobj,
