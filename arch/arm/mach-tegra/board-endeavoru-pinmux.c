@@ -139,7 +139,7 @@ static __initdata struct tegra_pingroup_config endeavoru_pinmux_common[] = {
     // Port B
     DEFAULT_PINMUX(GMI_A17,         UARTD,           NORMAL,	   NORMAL,     INPUT), // MDM_IMC_UART_RX
     DEFAULT_PINMUX(GMI_A18,         UARTD,           NORMAL,       NORMAL,     INPUT), // MDM_IMC_UART_CTS
-    DEFAULT_PINMUX(LCD_PWR0,        RSVD,            NORMAL,       NORMAL,     INPUT), // AUD_3V3_EN
+    DEFAULT_PINMUX(LCD_PWR0,        DISPLAYA,        NORMAL,       NORMAL,     INPUT), // AUD_3V3_EN
     DEFAULT_PINMUX(LCD_PCLK,        DISPLAYA,        NORMAL,       NORMAL,     INPUT), // NC
     DEFAULT_PINMUX(SDMMC3_DAT3,     SDMMC3,          PULL_UP,      NORMAL,     INPUT), // WIFI_SDIO_DATA3
     DEFAULT_PINMUX(SDMMC3_DAT2,     SDMMC3,          PULL_UP,      NORMAL,     INPUT), // WIFI_SDIO_DATA2
