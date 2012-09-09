@@ -930,25 +930,37 @@ static u64 tegra_dc_underflow_count(struct tegra_dc *dc, unsigned reg)
 	return ((count & 0x80000000) == 0) ? count : 10000000000ll;
 }
 
+#define UNDERFLOW_INCREASE_THRESHOLD 100
 static void tegra_dc_underflow_handler(struct tegra_dc *dc)
 {
 	u32 val;
 	int i;
+	u64 uf_increase = 0;
+	bool burst_increase = false;
 
 	dc->stats.underflows++;
 	if (dc->underflow_mask & WIN_A_UF_INT) {
-		dc->stats.underflows_a += tegra_dc_underflow_count(dc,
+		uf_increase = tegra_dc_underflow_count(dc,
 			DC_WINBUF_AD_UFLOW_STATUS);
+		if (uf_increase > UNDERFLOW_INCREASE_THRESHOLD)
+			burst_increase = true;
+		dc->stats.underflows_a += uf_increase;	
 		trace_printk("%s:Window A Underflow\n", dc->ndev->name);
 	}
 	if (dc->underflow_mask & WIN_B_UF_INT) {
-		dc->stats.underflows_b += tegra_dc_underflow_count(dc,
+		uf_increase = tegra_dc_underflow_count(dc,
 			DC_WINBUF_BD_UFLOW_STATUS);
+		if (uf_increase > UNDERFLOW_INCREASE_THRESHOLD)
+			burst_increase = true;
+		dc->stats.underflows_b += uf_increase;
 		trace_printk("%s:Window B Underflow\n", dc->ndev->name);
 	}
 	if (dc->underflow_mask & WIN_C_UF_INT) {
-		dc->stats.underflows_c += tegra_dc_underflow_count(dc,
+		uf_increase = tegra_dc_underflow_count(dc,
 			DC_WINBUF_CD_UFLOW_STATUS);
+		if (uf_increase > UNDERFLOW_INCREASE_THRESHOLD)
+			burst_increase = true;
+		dc->stats.underflows_c += uf_increase;
 		trace_printk("%s:Window C Underflow\n", dc->ndev->name);
 	}
 
