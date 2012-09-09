@@ -73,6 +73,4 @@ int rawchip_open_init(void);
 int rawchip_set_size(struct rawchip_sensor_data data);
 int Yushan_common_deinit(void);
 
-//XXX static inline void rawchip_dump_register(void) { Yushan_dump_register(); }
-
 #endif
