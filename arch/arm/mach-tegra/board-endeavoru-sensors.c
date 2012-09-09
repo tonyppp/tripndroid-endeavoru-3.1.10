@@ -281,7 +281,7 @@ static struct pana_gyro_platform_data pana_gyro_pdata = {
 	.acc_dir = 0x06,
 	.acc_polarity = 0x07,
 	.gyro_dir = 0x06,
-	.gyro_polarity = 0x02,
+	.gyro_polarity = 0x07,
 	.mag_dir = 0x06,
 	.mag_polarity = 0x07,
 	.sleep_pin = TEGRA_GPIO_PR2,
@@ -290,7 +290,7 @@ static struct pana_gyro_platform_data pana_gyro_pdata = {
 
 static struct i2c_board_info __initdata pana_gyro_GSBI12_boardinfo[] = {
 	{
-		I2C_BOARD_INFO("ewtzmu2", 0x69),
+		I2C_BOARD_INFO("ewtzmu2", 0x69 >> 0),
 		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PI6),
 		.platform_data = &pana_gyro_pdata,
 	},
@@ -303,7 +303,7 @@ static struct bma250_platform_data gsensor_bma250_platform_data = {
 
 static struct i2c_board_info i2c_bma250_devices[] = {
 	{
-		I2C_BOARD_INFO(BMA250_I2C_NAME, 0x19),
+		I2C_BOARD_INFO(BMA250_I2C_NAME, 0x19 >> 0),
 		.platform_data = &gsensor_bma250_platform_data,
 		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PO5),
 	},
@@ -316,7 +316,7 @@ static struct akm8975_platform_data compass_platform_data_xc = {
 
 static struct i2c_board_info i2c_akm8975_devices_xc[] = {
 	{
-		I2C_BOARD_INFO(AKM8975_I2C_NAME, 0x0D),
+		I2C_BOARD_INFO(AKM8975_I2C_NAME, 0x0D >> 0),
 		.platform_data = &compass_platform_data_xc,
 		.irq = TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PJ2),
 	},
@@ -398,19 +398,18 @@ static void enterprise_gsensor_irq_init(void)
 
 	pr_info("[GSNR] g-sensor irq_start...\n");
 
-		ret = gpio_request(TEGRA_GPIO_PN5, "GSNR_INT");
-		if (ret < 0) {
-			pr_err("%s: gpio_request failed %d\n", __func__, ret);
-			return;
-		}
+	ret = gpio_request(TEGRA_GPIO_PN5, "GSNR_INT");
+	if (ret < 0) {
+		pr_err("%s: gpio_request failed %d\n", __func__, ret);
+		return;
+	}
 
-		ret = gpio_direction_input(TEGRA_GPIO_PN5);
-		if (ret < 0) {
-			pr_err("%s: gpio_direction_input failed %d\n", __func__, ret);
-			gpio_free(TEGRA_GPIO_PN5);
-			return;
-		}
-		tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_LCD_SDOUT, TEGRA_PUPD_NORMAL);
+	ret = gpio_direction_input(TEGRA_GPIO_PN5);
+	if (ret < 0) {
+		pr_err("%s: gpio_direction_input failed %d\n", __func__, ret);
+		gpio_free(TEGRA_GPIO_PN5);
+		return;
+	}
 		
 	pr_info("[GSNR] g-sensor irq end...\n");
 
@@ -433,9 +432,7 @@ static void enterprise_gyro_diag_init(void)
 			gpio_free(TEGRA_GPIO_PH3);
 			return;
 		}
-		tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_GMI_AD11, TEGRA_PUPD_NORMAL);
 
-		
 	pr_info("[GYRO] gyro diag irq end...\n");
 
 }
@@ -456,7 +453,6 @@ static void __init enterprise_mpuirq_init(void)
 		gpio_free(TEGRA_GPIO_PI6);
 		return;
 	}
-	tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_GMI_CS7_N, TEGRA_PUPD_NORMAL);
 }
 
 static void enterprise_gyro_sleep_pin(void)
@@ -495,9 +491,6 @@ static void enterprise_comp_irq_init(void)
 		gpio_free(TEGRA_GPIO_PJ2);
 		return;
 	}
-
-	tegra_pinmux_set_pullupdown(TEGRA_PINGROUP_GMI_CS1_N, TEGRA_PUPD_NORMAL);
-	gpio_free(TEGRA_GPIO_PJ2);
 }
 
 static int endeavor_s5k3h2y_power_state = 0;
