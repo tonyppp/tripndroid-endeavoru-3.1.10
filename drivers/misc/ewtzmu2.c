@@ -462,7 +462,7 @@ static int EWTZMU2_ReadSensorDataFIFO(unsigned char *buf, int bufsize)
 {
 	char cmd;
 	int mode = 0;
-	unsigned char databuf[200];
+	unsigned char databuf[200] = {0};
 	int res = EW_DRV_SUCCESS, databyte = 6;
 
 	if ((!buf) || (bufsize < 121))
