@@ -28,9 +28,10 @@
 #include "../video/tegra/sii9234/TPI.h"
 #endif
 
-/*#define MHL_INTERNAL_POWER  1*/
+#define MHL_INTERNAL_POWER 1
 static bool g_vbus = 0;
 static bool g_desk_no_power = 0;
+static bool g_deskConnect = 0;
 
 static struct switch_dev dock_switch = {
 	.name = "dock",
@@ -168,7 +169,7 @@ static void check_vbus_in(struct work_struct *w)
 {
 #if 1
 	struct cable_detect_info *pInfo = container_of(w, struct cable_detect_info, vbus_detect_work.work);
-	int g_vbus = usb_get_vbus_value();
+	g_vbus = usb_get_vbus_value();
 
 	CABLE_INFO("%s: %d\n", __func__, g_vbus);
 	if (g_vbus) {
@@ -176,21 +177,23 @@ static void check_vbus_in(struct work_struct *w)
 			case DOCK_STATE_DESK:
 				if (g_desk_no_power) {
 					if (gpio_get_value(pInfo->usb_id_pin_gpio)) {
+						if (!g_deskConnect)
+							break;
 						CABLE_INFO("%s: Cradle removed [ID]\n", __func__);
 						g_desk_no_power = 0;
-						if (pInfo->config_desk_aud_gpios)
-							pInfo->config_desk_aud_gpios(0, 0);
 						switch_set_state(&dock_switch, DOCK_STATE_UNDOCKED);
+						g_deskConnect = false;
 						pInfo->accessory_type = DOCK_STATE_UNDOCKED;
 						irq_set_irq_type(pInfo->idpin_irq, IRQF_TRIGGER_LOW);
 						enable_irq(pInfo->idpin_irq);
 					}
 					else {
+						if (g_deskConnect)
+							break;
 						CABLE_INFO("%s: Cradle inserted\n", __func__);
-						if (pInfo->config_desk_aud_gpios)
-							pInfo->config_desk_aud_gpios(1, 1);
 						switch_set_state(&dock_switch, DOCK_STATE_DESK);
 						g_desk_no_power = 0;
+						g_deskConnect = true;
 					}
 				}
 				break;
@@ -201,10 +204,11 @@ static void check_vbus_in(struct work_struct *w)
 	else {
 		switch (pInfo->accessory_type) {
 			case DOCK_STATE_DESK:
+				if (!g_deskConnect)
+					break;
 				CABLE_INFO("%s: Cradle removed\n", __func__);
-				if (pInfo->config_desk_aud_gpios)
-					pInfo->config_desk_aud_gpios(0, 0);
 				switch_set_state(&dock_switch, DOCK_STATE_UNDOCKED);
+				g_deskConnect = false;
 				pInfo->accessory_type = DOCK_STATE_UNDOCKED;
 				irq_set_irq_type(pInfo->idpin_irq, IRQF_TRIGGER_LOW);
 				enable_irq(pInfo->idpin_irq);
@@ -351,9 +355,8 @@ static void cable_detect_handler(struct work_struct *w)
 	case DOCK_STATE_DESK:
 		CABLE_INFO("Cradle inserted\n");
 		if (usb_get_vbus_value()) {
-			if (pInfo->config_desk_aud_gpios)
-				pInfo->config_desk_aud_gpios(1, 1);
 			switch_set_state(&dock_switch, DOCK_STATE_DESK);
+			g_deskConnect = true;
 			pInfo->accessory_type = DOCK_STATE_DESK;
 		}
 		else {
@@ -373,9 +376,23 @@ static void cable_detect_handler(struct work_struct *w)
 		switch_set_state(&dock_switch, DOCK_STATE_MHL);
 		pInfo->accessory_type = DOCK_STATE_MHL;
 		pInfo->usb_dpdn_switch(PATH_MHL);
+		g_vbus = usb_get_vbus_value();
 #ifdef MHL_INTERNAL_POWER
-		if (!pInfo->mhl_internal_3v3 && !g_vbus)
-			send_cable_connect_notify(CONNECT_TYPE_INTERNAL);
+		if (pInfo->mhl_internal_3v3) {
+			if (g_vbus)
+				send_cable_connect_notify(CONNECT_TYPE_AC);
+			else {
+				CABLE_INFO("MHL internal power\n");
+				send_cable_connect_notify(CONNECT_TYPE_INTERNAL);
+			}
+		}
+		else {
+			if (g_vbus)
+				send_cable_connect_notify(CONNECT_TYPE_AC);
+		}
+#else
+		if (g_vbus)
+			send_cable_connect_notify(CONNECT_TYPE_AC);
 #endif
 		sii9234_mhl_device_wakeup();
 		break;
@@ -418,19 +435,20 @@ static void cable_detect_handler(struct work_struct *w)
 	value = gpio_get_value(pInfo->usb_id_pin_gpio);
 	CABLE_INFO("%s ID pin %d, type %d\n", __func__, value, pInfo->accessory_type);
 
-	if (usb_get_vbus_value() && pInfo->accessory_type != DOCK_STATE_UNDOCKED) {
-		if (cable_detection_ac_only())
-			send_cable_connect_notify(CONNECT_TYPE_AC);
-		else
-			send_cable_connect_notify(CONNECT_TYPE_UNKNOWN);
-	}
-
-	if (pInfo->accessory_type == DOCK_STATE_DESK)
-		return;
 #ifdef CONFIG_TEGRA_HDMI_MHL
 	if (pInfo->accessory_type == DOCK_STATE_MHL)
 		return;
 #endif
+	if (g_vbus && pInfo->accessory_type != DOCK_STATE_UNDOCKED) {
+		if (cable_detection_ac_only())
+			send_cable_connect_notify(CONNECT_TYPE_AC);
+		else
+			send_cable_connect_notify(CONNECT_TYPE_USB);
+	}
+
+	if (pInfo->accessory_type == DOCK_STATE_DESK)
+		return;
+
 	if (pInfo->accessory_type == DOCK_STATE_UNDOCKED)
 		irq_set_irq_type(pInfo->idpin_irq, value ? IRQF_TRIGGER_LOW : IRQF_TRIGGER_HIGH);
 	else
@@ -544,6 +562,8 @@ static void usb_id_detect_init(struct cable_detect_info *pInfo)
 	if (pInfo->usb_id_pin_gpio == 0)
 		return;
 
+	/* When plug MHL dongle with AC/USB booting, g_vbus value need update */
+	g_vbus = usb_get_vbus_value();
 	pInfo->idpin_irq = gpio_to_irq(pInfo->usb_id_pin_gpio);
 	if (pInfo->idpin_irq < 0) {
 		CABLE_ERR("%s: gpio_to_irq failed", __func__);
@@ -552,10 +572,25 @@ static void usb_id_detect_init(struct cable_detect_info *pInfo)
 
 	pInfo->idpin_irq = (unsigned int)pInfo->idpin_irq;
 	ret = request_irq(pInfo->idpin_irq, usbid_interrupt, IRQF_TRIGGER_LOW, "idpin_irq", pInfo);
+
 	if (ret < 0) {
 		CABLE_ERR("%s: request_irq failed\n", __func__);
 		return;
 	}
+
+#ifdef CONFIG_TEGRA_HDMI_MHL /* Workaround for booting with an accessory */
+	if (gpio_get_value(pInfo->usb_id_pin_gpio)) {
+		CABLE_INFO("%s: ID(H) workaround\n", __func__);
+		gpio_set_value(pInfo->mhl_reset_gpio, 0);
+		mdelay(1);
+
+		if (gpio_get_value(pInfo->usb_id_pin_gpio)) {
+			CABLE_INFO("%s: ID(H) no accessory\n", __func__);
+			gpio_set_value(pInfo->mhl_reset_gpio, 1);
+			SwitchToD3_Force();
+		}
+	}
+#endif
 	CABLE_INFO("%s: ID=%d, IRQ=0x%x", __func__, pInfo->usb_id_pin_gpio, pInfo->idpin_irq);
 	return;
 }
@@ -572,6 +607,7 @@ static void mhl_status_notifier_func(bool isMHL, int charging_type)
 		CABLE_INFO("%s: accessory is not MHL, type %d\n", __func__, pInfo->accessory_type);
 		return;
 	}
+
 	if (!isMHL) {
 		CABLE_INFO("MHL removed\n");
 
@@ -600,6 +636,10 @@ static void mhl_status_notifier_func(bool isMHL, int charging_type)
 	else {
 		mhl_connected = 1;
 		irq_set_irq_type(pInfo->idpin_irq, id_pin ? IRQF_TRIGGER_LOW : IRQF_TRIGGER_HIGH);
+#if 1
+		if (g_vbus && (charging_type > CONNECT_TYPE_NONE))
+			send_cable_connect_notify(charging_type);
+#endif
 	}
 }
 
@@ -840,10 +880,19 @@ EXPORT_SYMBOL(cable_detection_queue_recovery_host_work);
 
 void cable_detection_queue_vbus_work(int time)
 {
+	int ret;
 	struct cable_detect_info *pInfo = &the_cable_info;
+	CABLE_INFO("%s\n", __func__);
 
 	if (pInfo->cable_detect_wq)
-		queue_delayed_work(pInfo->cable_detect_wq, &pInfo->vbus_detect_work, time);
+	{
+		ret = queue_delayed_work(pInfo->cable_detect_wq, &pInfo->vbus_detect_work, time);
+		if (ret == 0) {
+			CABLE_INFO("%s: vbus detect debounce\n", __func__);
+			cancel_delayed_work(&pInfo->vbus_detect_work);
+		        queue_delayed_work(pInfo->cable_detect_wq, &pInfo->vbus_detect_work, time);
+		}
+	}
 }
 EXPORT_SYMBOL(cable_detection_queue_vbus_work);
 
@@ -863,7 +912,7 @@ static void usb_status_notifier_func(int cable_type)
 
 #ifdef CONFIG_TEGRA_HDMI_MHL
 #ifdef MHL_INTERNAL_POWER
-	if (!pInfo->mhl_internal_3v3 && pInfo->accessory_type == DOCK_STATE_MHL) {
+	if (pInfo->mhl_internal_3v3 && pInfo->accessory_type == DOCK_STATE_MHL) {
 		CABLE_INFO("%s: MHL detected. Do nothing\n", __func__);
 		return;
 	}
