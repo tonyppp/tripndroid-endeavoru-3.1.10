@@ -749,38 +749,31 @@ static void enable_ps_interrupt(char *ps_conf)
 
 static void sensor_irq_do_work(struct work_struct *work)
 {
-	int retry;
 	struct cm3629_info *lpi = lp_info;
 	uint8_t cmd[3] = {0};
 	uint8_t add = 0;
 
 	wake_lock_timeout(&(lpi->ps_wake_lock), 3*HZ);
 
-	for(retry = 0; retry < I2C_RETRY_COUNT; retry++) {
-		if(tegra_i2c_is_ready(lp_info->i2c_client->adapter))
-			break;
-		else {
-			D("[PS][cm3629] i2c is not ready, retry = %d\n", retry);
-			msleep(3);
-		}
-	}
+	// add delay to prevent tegra_i2c errors, increase if needed
+	msleep(2);
 
-	/* Check ALS or PS */
-	_cm3629_I2C_Read2(lpi->cm3629_slave_address, INT_FLAG, cmd,2);
-
+	/*check ALS or PS*/
+	_cm3629_I2C_Read2(lpi->cm3629_slave_address, INT_FLAG, cmd, 2);
 	add = cmd[1];
-	/* D("[cm3629] %s:, INTERRUPT = 0x%x \n", __func__, add); */
+
 	if ((add & CM3629_PS1_IF_AWAY) || (add & CM3629_PS1_IF_CLOSE) ||
 	    (add & CM3629_PS2_IF_AWAY) || (add & CM3629_PS2_IF_CLOSE)) {
-		report_psensor_input_event(lpi, 1);
-	}
-	else if (((add & CM3629_ALS_IF_L) == CM3629_ALS_IF_L) ||
-		     ((add & CM3629_ALS_IF_H) == CM3629_ALS_IF_H)) {
+		if ((add & CM3629_PS1_IF_AWAY) || (add & CM3629_PS2_IF_AWAY))
+			report_psensor_input_event(lpi, 1);/*1 meam far*/
+		else
+			report_psensor_input_event(lpi, 2);/*2 meam close*/
+	} else if (((add & CM3629_ALS_IF_L) == CM3629_ALS_IF_L) ||
+		     ((add & CM3629_ALS_IF_H) == CM3629_ALS_IF_H))
 		report_lsensor_input_event(lpi, 0);
-	} else {
+	 else
 		pr_err("[PS][cm3629 error]%s error: unkown interrupt: 0x%x!\n",
 		__func__, add);
-	}
 
 	enable_irq(lpi->irq);
 	if(!((add & CM3629_PS1_IF_AWAY) || (add & CM3629_PS1_IF_CLOSE) ||
