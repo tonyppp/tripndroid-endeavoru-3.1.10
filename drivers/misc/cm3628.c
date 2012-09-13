@@ -601,31 +601,22 @@ static void sensor_irq_do_work(struct work_struct *work)
 
 	wake_lock_timeout(&(lpi->ps_wake_lock), 3*HZ);
 
-	for(retry = 0;  retry < I2C_RETRY_COUNT; retry++) {
-		if(tegra_i2c_is_ready(lp_info->i2c_client->adapter))
-			break;
-		else {
-			D("[PS][cm3629] i2c is not ready, retry = %d\n", retry);
-			msleep(3);
-		}
-	}
+	// add delay to prevent tegra_i2c errors, increase if needed
+	msleep(2);
 
 	/*check ALS or PS*/
 	_cm3628_I2C_Read_Byte(lpi->check_interrupt_add, &add);
-	/*D("[PS][CM3628] %s: check_interrupt_add = 0x%03X, add = 0x%x , add>>1 = 0x%x\n",
-		__func__, lpi->check_interrupt_add, add, add>>1);*/
+
 	add = add>>1;
 	if (add == lpi->ALS_slave_address) {
 		report_lsensor_input_event(lpi, 0);
 	} else if (add == lpi->PS_slave_address) {
 		report_psensor_input_event(lpi, 1);
-	} else {
+	} else
 		pr_err("[PS][CM3628 error]%s error: unkown interrupt: 0x%x!\n",
 		__func__, add);
-	}
 
 	enable_irq(lpi->irq);
-
 	if(!(add == lpi->PS_slave_address))
 		wake_unlock(&(lpi->ps_wake_lock));
 }
