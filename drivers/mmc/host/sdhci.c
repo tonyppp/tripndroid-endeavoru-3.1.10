@@ -2886,23 +2886,14 @@ int sdhci_add_host(struct sdhci_host *host)
 	if (ret)
 		goto untasklet;
 
-// TripNRaVeR: we dont support vmmc
-#ifndef CONFIG_MACH_ENDEAVORU
 	host->vmmc = regulator_get(mmc_dev(mmc), "vmmc");
-#endif
 
-#ifdef CONFIG_MACH_ENDEAVORU
-	host->vmmc = NULL;
-#endif
-
-#ifndef CONFIG_MACH_ENDEAVORU
 	if (IS_ERR(host->vmmc)) {
 		printk(KERN_INFO "%s: no vmmc regulator found\n", mmc_hostname(mmc));
 		host->vmmc = NULL;
 	} else {
 		regulator_enable(host->vmmc);
 	}
-#endif
 	sdhci_init(host, 0);
 
 #ifdef CONFIG_MMC_DEBUG
