@@ -17,14 +17,15 @@
 #ifndef BASEBAND_XMM_POWER_H
 #define BASREBAND_XMM_POWER_H
 
-#include <linux/completion.h>
 #include <linux/pm.h>
 #include <linux/suspend.h>
+#include <linux/completion.h>
+
 #include "gpio-names.h"
 
+#define BB_XMM_OEM1
 #define VENDOR_ID         0x1519
 #define PRODUCT_ID        0x0020
-#define BB_XMM_OEM1
 
 #define TEGRA_EHCI_DEVICE "/sys/devices/platform/tegra-ehci.1/ehci_power"
 
@@ -44,6 +45,8 @@ struct baseband_power_platform_data {
 	enum baseband_type baseband_type;
 	struct platform_device* (*hsic_register)(void);
 	void (*hsic_unregister)(struct platform_device *);
+	wait_queue_head_t bb_wait;
+	unsigned int pin_state;
 	union {
 		struct {
 			int mdm_reset;
@@ -109,5 +112,9 @@ enum baseband_xmm_powerstate_t {
 irqreturn_t baseband_xmm_power_ipc_ap_wake_irq(int irq, void *dev_id);
 
 void baseband_xmm_set_power_status(unsigned int status);
+ssize_t debug_gpio_dump(struct device *dev,
+		struct device_attribute *attr,
+		const char *buf, size_t count);
+int trigger_radio_fatal_get_coredump(void);
 
 #endif  /* BASREBAND_XMM_POWER_H */
