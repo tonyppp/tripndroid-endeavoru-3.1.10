@@ -684,7 +684,7 @@ int __init enterprise_edp_init(void)
 
 	regulator_mA = get_maximum_cpu_current_supported();
 	if (!regulator_mA) {
-		regulator_mA = 5000; /* regular AP30 */
+		regulator_mA = 6000; /* regular AP30 */
 	}
 	pr_info("%s: CPU regulator %d mA\n", __func__, regulator_mA);
 
