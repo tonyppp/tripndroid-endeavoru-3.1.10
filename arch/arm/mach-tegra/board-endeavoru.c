@@ -1384,6 +1384,9 @@ static struct cable_detect_platform_data cable_detect_pdata = {
 	.config_desk_aud_gpios  = config_tegra_desk_aud_gpios,
 	.get_adc_cb		= get_tegra_adc_cb,
 	.cable_gpio_init	= cable_tegra_gpio_init,
+#ifdef CONFIG_TEGRA_HDMI_MHL
+	.mhl_internal_3v3 	= 1,
+#endif
 };
 
 static struct platform_device cable_detect_device = {
