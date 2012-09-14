@@ -1266,6 +1266,7 @@ static int cardu_usb_hsic_postsupend(void)
 #ifdef CONFIG_TEGRA_BB_XMM_POWER
 	baseband_xmm_set_power_status(BBXMM_PS_L2);
 #endif
+	return 0;
 }
 
 static int cardu_usb_hsic_preresume(void)
@@ -1274,6 +1275,7 @@ static int cardu_usb_hsic_preresume(void)
 #ifdef CONFIG_TEGRA_BB_XMM_POWER
 	baseband_xmm_set_power_status(BBXMM_PS_L2TOL0);
 #endif
+	return 0;
 }
 
 static int cardu_usb_hsic_phy_ready(void)
@@ -1282,6 +1284,7 @@ static int cardu_usb_hsic_phy_ready(void)
 #ifdef CONFIG_TEGRA_BB_XMM_POWER
 	baseband_xmm_set_power_status(BBXMM_PS_L0);
 #endif
+	return 0;
 }
 
 static int cardu_usb_hsic_phy_off(void)
@@ -1290,6 +1293,7 @@ static int cardu_usb_hsic_phy_off(void)
 #ifdef CONFIG_TEGRA_BB_XMM_POWER
 	baseband_xmm_set_power_status(BBXMM_PS_L3);
 #endif
+	return 0;
 }
 
 static void enterprise_usb_init(void)
