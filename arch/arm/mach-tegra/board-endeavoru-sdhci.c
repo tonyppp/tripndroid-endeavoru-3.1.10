@@ -61,6 +61,7 @@ static struct wifi_platform_data enterprise_wifi_control = {
 	.set_carddetect = enterprise_wifi_set_carddetect,
 };
 */
+/*
 static struct resource wifi_resource[] = {
 	[0] = {
 		.name	= "bcm4329_wlan_irq",
@@ -69,6 +70,7 @@ static struct resource wifi_resource[] = {
 		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL | IORESOURCE_IRQ_SHAREABLE,
 	},
 };
+*/
 /*
 static struct platform_device enterprise_wifi_device = {
 	.name           = "bcm4329_wlan",
