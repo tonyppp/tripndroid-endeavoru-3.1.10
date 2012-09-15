@@ -1400,12 +1400,15 @@ static void enterprise_modem_init(void)
 
 		pr_info("%s: enable baseband gpio(s)\n", __func__);
 
+		tegra_ehci2_device.dev.platform_data = &tegra_ehci2_hsic_xmm_pdata;
 		tegra_baseband_power_data.hsic_register = &tegra_usb_hsic_host_register;
 		tegra_baseband_power_data.hsic_unregister = &tegra_usb_hsic_host_unregister;
 
 		platform_device_register(&tegra_baseband_power_device);
 		platform_device_register(&tegra_baseband_power2_device);
 		platform_device_register(&simhotswap_device);
+
+		tegra_ehci2_hsic_xmm_pdata.u_data.host.power_off_on_suspend = 0;
 
 		printk(KERN_INFO"%s: gpio config for sim_det#.", __func__);
 
