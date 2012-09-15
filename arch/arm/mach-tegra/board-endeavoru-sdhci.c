@@ -54,13 +54,13 @@ static struct wl12xx_platform_data enterprise_wlan_data __initdata = {
 	.board_ref_clock = WL12XX_REFCLOCK_26,
 	.board_tcxo_clock = 1,
 };
-
+/*
 static struct wifi_platform_data enterprise_wifi_control = {
 	.set_power      = enterprise_wifi_power,
 	.set_reset      = enterprise_wifi_reset,
 	.set_carddetect = enterprise_wifi_set_carddetect,
 };
-
+*/
 static struct resource wifi_resource[] = {
 	[0] = {
 		.name	= "bcm4329_wlan_irq",
