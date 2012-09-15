@@ -1114,7 +1114,7 @@ static int __init htc_battery_init(void)
 	wake_lock_init(&htc_batt_timer.battery_lock, WAKE_LOCK_SUSPEND, "htc_battery_tps80032");
 	mutex_init(&htc_batt_info.info_lock);
 
-	usb_register_notifier(&usb_status_notifier);
+//	usb_register_notifier(&usb_status_notifier);
 	platform_driver_register(&htc_battery_driver);
 
 	/* init battery parameters. */
