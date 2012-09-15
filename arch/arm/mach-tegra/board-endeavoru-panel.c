@@ -87,16 +87,6 @@ struct workqueue_struct *bkl_wq;
 struct work_struct bkl_work;
 struct timer_list bkl_timer;
 
-static struct gpio panel_init_gpios[] = {
-    {LCM_TE,        GPIOF_IN,               "lcm_te"},
-    {LCM_PWM,       GPIOF_OUT_INIT_LOW,     "pm0"},
-    {MHL_INT,       GPIOF_IN,               "mhl_int"},
-    {MHL_1V2_EN,    GPIOF_OUT_INIT_HIGH,    "mhl_1v2_en"},
-    {MHL_RST,       GPIOF_OUT_INIT_HIGH,    "mhl_rst"},
-    {MHL_HPD,       GPIOF_IN,               "mhl_hpd"},
-    {MHL_3V3_EN,    GPIOF_OUT_INIT_HIGH,    "mhl_3v3_en"},
-};
-
 /*global varible for work around*/
 static bool g_display_on = true;
 
@@ -289,11 +279,6 @@ static struct resource enterprise_disp2_resources[] = {
 		.end	= TEGRA_HDMI_BASE + TEGRA_HDMI_SIZE - 1,
 		.flags	= IORESOURCE_MEM,
 	},
-};
-
-static struct tegra_dc_sd_settings enterprise_sd_settings = {
-	.enable = 0, /* Normal mode operation */
-	.bl_device = &enterprise_disp1_backlight_device,
 };
 
 static struct tegra_fb_data enterprise_hdmi_fb_data = {
@@ -3166,7 +3151,6 @@ static void enterprise_panel_late_resume(struct early_suspend *h)
 int __init enterprise_panel_init(void)
 {
 	int err;
-	int i = 0;
 
 	struct resource __maybe_unused *res;
 
@@ -3363,8 +3347,6 @@ int __init enterprise_panel_init(void)
 	INIT_WORK(&bkl_work, bkl_do_work);
 	bkl_wq = create_workqueue("bkl_wq");
 	setup_timer(&bkl_timer, bkl_update, NULL);
-
-failed:
 
 	return err;
 }
