@@ -116,7 +116,7 @@ static struct resource sdhci_resource3[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 };
-
+/*
 static struct embedded_sdio_data embedded_sdio_data0 = {
 	.cccr   = {
 		.sdio_vsn       = 2,
@@ -131,7 +131,7 @@ static struct embedded_sdio_data embedded_sdio_data0 = {
 		.device         = 0x4329,
 	},
 };
-
+*/
 static struct tegra_sdhci_platform_data tegra_sdhci_platform_data2 = {
 	.mmc_data = {
 		.status = enterprise_wifi_status,
