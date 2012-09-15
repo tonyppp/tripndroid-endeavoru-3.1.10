@@ -41,7 +41,7 @@ static void (*wifi_status_cb)(int card_present, void *dev_id);
 static void *wifi_status_cb_devid;
 
 static int enterprise_wifi_status_register(void (*callback)(int , void *), void *);
-static int enterprise_wifi_reset(int on);
+// static int enterprise_wifi_reset(int on);
 
 int enterprise_wifi_power(int on);
 int enterprise_wifi_set_carddetect(int val);
@@ -230,13 +230,13 @@ int enterprise_wifi_power(int on)
 	return 0;
 }
 EXPORT_SYMBOL(enterprise_wifi_power);
-
+/*
 static int enterprise_wifi_reset(int on)
 {
 	pr_debug("%s: do nothing\n", __func__);
 	return 0;
 }
-
+*/
 #ifdef CONFIG_TEGRA_PREPOWER_WIFI
 static int __init enterprise_wifi_prepower(void)
 {
