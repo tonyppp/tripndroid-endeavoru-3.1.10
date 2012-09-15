@@ -195,8 +195,6 @@ static struct platform_device A_PROJECT_keys_device = {
 
 int __init A_PROJECT_keys_init(void)
 {
-	int i;
-
 	pr_info("Registering gpio keys\n");
 
 	platform_device_register(&A_PROJECT_keys_device);
