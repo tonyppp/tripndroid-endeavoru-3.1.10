@@ -344,6 +344,7 @@ static int tegra_wdt_probe(struct platform_device *pdev)
 	res_src = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	res_wdt = platform_get_resource(pdev, IORESOURCE_MEM, 1);
 	res_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+	res_int_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
 
 	if (!res_src || !res_wdt || (!pdev->id && !res_irq)) {
 		dev_err(&pdev->dev, "incorrect resources\n");
@@ -351,7 +352,6 @@ static int tegra_wdt_probe(struct platform_device *pdev)
 	}
 
 #ifdef CONFIG_TEGRA_FIQ_DEBUGGER
-	res_int_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
 	if (!pdev->id && !res_int_base) {
 		dev_err(&pdev->dev, "FIQ_DBG: INT base not defined\n");
 		return -ENOENT;
