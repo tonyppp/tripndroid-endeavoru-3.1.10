@@ -33,6 +33,7 @@
 #include <linux/suspend.h>
 #include <linux/htc_hostdbg.h>
 #include <linux/pm_qos_params.h>
+#include <linux/regulator/consumer.h>
 
 #include "board.h"
 #include "devices.h"
