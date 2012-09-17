@@ -48,6 +48,11 @@
 #include <mach/usb_phy.h>
 #include <mach/iomap.h>
 
+#ifdef CONFIG_MACH_ENDEAVORU
+#include <mach/cable_detect.h>
+#include <linux/wakelock.h>
+#endif
+
 #include "tegra_udc.h"
 
 
@@ -94,6 +99,7 @@ static const u8 tegra_udc_test_packet[53] = {
 	0xfc, 0x7e, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd, 0x7e
 };
 
+static void update_wake_lock(int status);
 static struct tegra_udc *the_udc;
 
 #ifdef CONFIG_TEGRA_GADGET_BOOST_CPU_FREQ
@@ -2229,6 +2235,34 @@ static irqreturn_t tegra_udc_irq(int irq, void *_udc)
 	spin_unlock_irqrestore(&udc->lock, flags);
 	return status;
 }
+
+#ifdef CONFIG_MACH_ENDEAVORU
+static DEFINE_MUTEX(notify_sem);
+static void send_usb_connect_notify(struct work_struct *w)
+{
+	static struct t_usb_status_notifier *notifier;
+	struct tegra_udc *udc = container_of(w, struct tegra_udc,notifier_work);
+
+	if (!udc)
+		return;
+
+	update_wake_lock(udc->connect_type);
+	mutex_lock(&notify_sem);
+	list_for_each_entry(notifier,
+		&g_lh_usb_notifier_list,
+		notifier_link) {
+			if (notifier->func != NULL) {
+				/* Notify other drivers about connect type. */
+				/* use slow charging for unknown type*/
+				if (udc->connect_type == CONNECT_TYPE_UNKNOWN)
+					notifier->func(CONNECT_TYPE_USB);
+				else
+					notifier->func(udc->connect_type);
+			}
+		}
+	mutex_unlock(&notify_sem);
+}
+#endif
 
 /**
  * Hook to gadget drivers

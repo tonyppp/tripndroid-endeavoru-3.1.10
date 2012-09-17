@@ -434,6 +434,9 @@ struct tegra_udc {
 	unsigned remote_wakeup:1;
 	unsigned selfpowered:1;
 	bool has_hostpc;
+
+	enum usb_connect_type connect_type;
+	struct work_struct notifier_work;
 };
 
 
