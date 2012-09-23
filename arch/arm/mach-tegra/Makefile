@@ -81,12 +81,11 @@ obj-y                                   += headsmp.o
 obj-y                                   += reset.o
 obj-$(CONFIG_TEGRA_SYSTEM_DMA)          += dma.o
 obj-$(CONFIG_CPU_FREQ)                  += cpu-tegra.o
-ifeq ($(CONFIG_TEGRA_MPDECISION),y)
+ifeq ($(CONFIG_TEGRA_AUTO_HOTPLUG),y)
 ifeq ($(CONFIG_CPUQUIET_FRAMEWORK),y)
 obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += cpuquiet.o
 else
-obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += tegra_mpdecision.o
-obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += tegra_rq_stats.o
+obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += cpu-tegra3.o
 endif
 endif
 obj-$(CONFIG_TEGRA_PCI)                 += pcie.o

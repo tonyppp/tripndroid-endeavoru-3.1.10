@@ -20,15 +20,10 @@
 #include <linux/profile.h>
 #include <linux/sched.h>
 #include <linux/module.h>
-#include <linux/rq_stats.h>
 
 #include <asm/irq_regs.h>
 
 #include "tick-internal.h"
-
-struct rq_data rq_info;
-struct workqueue_struct *rq_wq;
-spinlock_t rq_lock;
 
 /*
  * Per cpu nohz control structure
