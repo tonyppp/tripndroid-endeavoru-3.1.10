@@ -2,6 +2,7 @@ menu "CPUQUIET Framework"
 
 config CPUQUIET_FRAMEWORK
 	bool "Cpuquiet framework"
+	depends on !TEGRA_MPDECISION
 	default n
 	help
 	  Cpuquiet implements pluggable policies for forcing cpu cores into a
