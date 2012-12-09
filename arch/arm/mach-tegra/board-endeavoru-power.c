@@ -619,6 +619,9 @@ int __init enterprise_regulator_init(void)
 	pmc_dpd_pads = readl(pmc + PMC_DPD_PADS_ORIDE);
 	writel(pmc_dpd_pads & ~PMC_DPD_PADS_ORIDE_BLINK , pmc + PMC_DPD_PADS_ORIDE);
 
+	/* Setting CPU voltage tolerance in lower side for 3000uV */
+	pdata_smps1_common.tolerance_uv = 3000;
+
 	tegra_gpio_enable(TEGRA_GPIO_PF7);
 
 	tps_platform.num_subdevs = ARRAY_SIZE(tps80031_devs_a03);
